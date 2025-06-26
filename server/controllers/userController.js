@@ -1,0 +1,104 @@
+const User = require('../models/user');
+
+// GET all users
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find().populate('booksRead').populate('rewards');
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// GET user by ID
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).populate('booksRead').populate('rewards');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// POST new user
+exports.createUser = async (req, res) => {
+  const user = new User(req.body);
+  try {
+    const saved = await user.save();
+    res.status(201).json(saved);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// PUT update user
+exports.updateUser = async (req, res) => {
+  try {
+    const updated = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updated) return res.status(404).json({ message: 'User not found' });
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// DELETE user
+exports.deleteUser = async (req, res) => {
+  try {
+    const deleted = await User.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: 'User not found' });
+    res.json({ message: 'User deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.updateReadingProgress = async (req, res) => {
+  try {
+    const { userId, bookId } = req.params;
+    const { progress } = req.body; // progress = nombre de pages lues ou pourcentage
+
+    if (progress == null) {
+      return res.status(400).json({ message: 'Progress is required' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Cherche si le livre existe déjà dans booksRead
+    let bookProgress = user.booksRead.find(
+      (item) => item.book && item.book.toString() === bookId
+    );
+
+    if (bookProgress) {
+      bookProgress.progress = progress;
+    } else {
+      user.booksRead.push({ book: bookId, progress });
+    }
+
+    await user.save();
+    res.json(user.booksRead);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // Recherche l'utilisateur par email
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ message: 'Invalid email or password' });
+
+    // Vérifie le mot de passe (en clair ici, à sécuriser avec bcrypt en prod)
+    if (user.password !== password) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Authentification réussie
+    res.json({ message: 'Login successful', userId: user._id, username: user.username });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
