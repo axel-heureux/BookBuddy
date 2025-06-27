@@ -1,0 +1,26 @@
+.homepage-navbar {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+  background: #222;
+  color: #fff;
+}
+
+.homepage-navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.homepage-navbar a.active,
+.homepage-navbar a:hover {
+  color: #a5b4fc;
+  text-decoration: underline;
+}
+
+.homepage-welcome {
+  text-align: center;
+  margin-top: 3rem;
+}

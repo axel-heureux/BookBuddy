@@ -1,0 +1,39 @@
+.favorite-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fafafa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.favorite-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #222;
+}
+
+.favorite-message {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.2em;
+  margin-top: 2rem;
+}
+
+.favorite-list {
+  list-style: none;
+  padding: 0;
+}
+
+.favorite-item {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.favorite-item strong {
+  font-size: 1.1em;
+  color: #f59e42;
+}

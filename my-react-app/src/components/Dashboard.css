@@ -1,0 +1,32 @@
+.dashboard-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fafafa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.dashboard-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #222;
+}
+
+.dashboard-books-list {
+  list-style: none;
+  padding: 0;
+}
+
+.dashboard-book-item {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.dashboard-book-item strong {
+  font-size: 1.1em;
+  color: #3b82f6;
+}
