@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 const rewardSchema = new mongoose.Schema({
-  nom:        { type: String, required: true },
+  titre:        { type: String, required: true },
   description:{ type: String },
   cout:       { type: Number, required: true }, // en points
   image:      { type: String } // optionnel : URL de l'image

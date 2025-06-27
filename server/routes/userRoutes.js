@@ -2,16 +2,25 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const favoriteController = require('../controllers/favoriteController');
+const auth = require('../middleware/authMiddleware');
 
-router.get('/', userController.getUsers);
-router.get('/:id', userController.getUserById);
+// Protège toutes les routes sensibles avec auth
+router.get('/', auth, userController.getUsers);
+router.get('/:id', auth, userController.getUserById);
+router.put('/:id', auth, userController.updateUser);
+router.delete('/:id', auth, userController.deleteUser);
+router.post('/:userId/favorites', auth, favoriteController.addFavoriteBook);
+router.delete('/:userId/favorites/:bookId', auth, favoriteController.removeFavoriteBook);
+router.put('/:userId/progress/:bookId', auth, userController.updateReadingProgress);
+router.post('/logout', auth, userController.logoutUser); // Déconnexion de l'utilisateur
+
+// Routes publiques
 router.post('/', userController.createUser);
-router.put('/:id', userController.updateUser);
-router.delete('/:id', userController.deleteUser);
-router.post('/:userId/favorites', favoriteController.addFavoriteBook);
-router.delete('/:userId/favorites/:bookId', favoriteController.removeFavoriteBook);
-// Mettre à jour la progression de lecture d'un livre pour un utilisateur
-router.put('/:userId/progress/:bookId', userController.updateReadingProgress);
 router.post('/login', userController.loginUser);
+
+// Route de test 401
+router.get('/unauthorized', (req, res) => {
+  res.status(401).json({ message: 'Token invalide ou manquant' });
+});
 
 module.exports = router;

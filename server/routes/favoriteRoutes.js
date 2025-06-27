@@ -1,5 +1,12 @@
-// POST /users/:userId/favorites   (ajouter un livre aux favoris)
-router.post('/:userId/favorites', userController.addFavoriteBook);
+const express = require('express');
+const router = express.Router();
+const userController = require('../controllers/userController');
+const auth = require('../middleware/authMiddleware');
 
-// DELETE /users/:userId/favorites/:bookId   (retirer un livre des favoris)
-router.delete('/:userId/favorites/:bookId', userController.removeFavoriteBook);
+// Ajouter un livre aux favoris (protégé)
+router.post('/:userId/favorites', auth, userController.addFavoriteBook);
+
+// Retirer un livre des favoris (protégé)
+router.delete('/:userId/favorites/:bookId', auth, userController.removeFavoriteBook);
+
+module.exports = router;
