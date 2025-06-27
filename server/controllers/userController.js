@@ -120,5 +120,5 @@ exports.logoutUser = (req, res) => {
 };
 
 exports.getProfile = (req, res) => {
-  // ... code pour retourner le profil utilisateur ...
+  res.json({ user: req.user });
 };
