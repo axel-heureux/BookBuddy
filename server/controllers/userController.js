@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
 // GET all users
 exports.getUsers = async (req, res) => {
@@ -96,9 +97,28 @@ exports.loginUser = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Authentification réussie
-    res.json({ message: 'Login successful', userId: user._id, username: user.username });
+    // Authentification réussie : génération du token
+    const token = jwt.sign(
+      { userId: user._id, username: user.username },
+      process.env.JWT_SECRET || 'secret',
+      { expiresIn: '1h' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      token,
+      userId: user._id,
+      username: user.username
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+};
+
+exports.logoutUser = (req, res) => {
+  res.json({ message: "Déconnexion réussie (statique, à adapter si tu utilises des tokens/sessions)" });
+};
+
+exports.getProfile = (req, res) => {
+  // ... code pour retourner le profil utilisateur ...
 };
