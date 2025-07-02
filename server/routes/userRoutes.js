@@ -7,6 +7,7 @@ const auth = require('../middleware/authMiddleware');
 // Protège toutes les routes sensibles avec auth
 router.get('/', auth, userController.getUsers);
 router.get('/profile', auth, userController.getProfile);
+router.get('/booksread', auth, userController.getBooksRead);
 router.get('/:id', auth, userController.getUserById);
 router.put('/:id', auth, userController.updateUser);
 router.delete('/:id', auth, userController.deleteUser);

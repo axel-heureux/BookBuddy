@@ -119,6 +119,24 @@ exports.logoutUser = (req, res) => {
   res.json({ message: "Déconnexion réussie (statique, à adapter si tu utilises des tokens/sessions)" });
 };
 
-exports.getProfile = (req, res) => {
-  res.json({ user: req.user });
+exports.getProfile = async (req, res) => {
+  try {
+    // req.user._id doit être présent (voir remarque ci-dessous)
+    const user = await User.findById(req.user._id || req.user.id)
+      .populate('booksRead.book')
+      .populate('favorites.book')
+      .populate('rewards');
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur', error: err.message });
+  }
+};
+
+// GET books read by the user
+exports.getBooksRead = (req, res) => {
+  // On suppose que req.user.booksRead contient les livres lus (peuplé par le middleware auth)
+  res.json({ booksRead: req.user.booksRead || [] });
 };
