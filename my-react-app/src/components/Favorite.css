@@ -13,6 +13,12 @@
   color: #222;
 }
 
+.favorite-author {
+  color: #111;
+  font-size: 1.1em;
+  margin-bottom: 0.5rem;
+}
+
 .favorite-message {
   text-align: center;
   color: #6b7280;

@@ -18,7 +18,10 @@ function Favorite() {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
-        setFavorites(res.data.user?.favorites || []);
+        // Si favorites est un tableau d'objets { book: {...}, ... }
+        // alors il faut afficher book.titre et book.auteur
+        const favs = res.data.user?.favorites || [];
+        setFavorites(favs);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -33,10 +36,10 @@ function Favorite() {
         <p className="favorite-message">Aucun livre favori pour le moment.</p>
       ) : (
         <ul className="favorite-list">
-          {favorites.map((book, idx) => (
-            <li key={book._id || idx} className="favorite-item">
-              <strong>{book.titre || 'Titre inconnu'}</strong>
-              <div>Auteur : {book.auteur || 'Inconnu'}</div>
+          {favorites.map((fav, idx) => (
+            <li key={fav._id || idx} className="favorite-item">
+              <strong>{fav.book?.titre || fav.titre || 'Titre inconnu'}</strong>
+              <div className="favorite-author">Auteur : {fav.book?.auteur || fav.auteur || 'Inconnu'}</div>
             </li>
           ))}
         </ul>

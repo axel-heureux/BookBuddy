@@ -140,3 +140,24 @@ exports.getBooksRead = (req, res) => {
   // On suppose que req.user.booksRead contient les livres lus (peuplé par le middleware auth)
   res.json({ booksRead: req.user.booksRead || [] });
 };
+
+// Ajoute une reward à un utilisateur
+exports.addRewardToUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { rewardId } = req.body; // l'id du badge à ajouter
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    // Ajoute le badge si pas déjà présent
+    if (!user.rewards.includes(rewardId)) {
+      user.rewards.push(rewardId);
+      await user.save();
+    }
+
+    res.json({ message: 'Badge attribué', rewards: user.rewards });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

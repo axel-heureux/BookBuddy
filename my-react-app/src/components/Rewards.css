@@ -13,6 +13,12 @@
   color: #222;
 }
 
+.rewards-description {
+  color: #000000;
+  font-size: 0.9em;
+  margin-top: 0.5rem;
+}
+
 .rewards-list {
   list-style: none;
   padding: 0;
