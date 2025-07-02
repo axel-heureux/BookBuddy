@@ -16,6 +16,9 @@ router.delete('/:userId/favorites/:bookId', auth, favoriteController.removeFavor
 router.put('/:userId/progress/:bookId', auth, userController.updateReadingProgress);
 router.post('/logout', auth, userController.logoutUser); // Déconnexion de l'utilisateur
 router.post('/:id/rewards', auth, userController.addRewardToUser);
+router.delete('/booksread/:id', auth, userController.deleteBookRead);
+router.post('/:userId/booksread', auth, userController.addBookRead);
+router.put('/booksread/:id', auth, userController.updateBookRead);
 
 // Routes publiques
 router.post('/', userController.createUser);

@@ -161,3 +161,69 @@ exports.addRewardToUser = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.deleteBookRead = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const bookReadId = req.params.id;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    user.booksRead = user.booksRead.filter(item => item._id.toString() !== bookReadId);
+    await user.save();
+
+    res.json({ message: 'Livre lu supprimé', booksRead: user.booksRead });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.addBookRead = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { bookId, progress } = req.body; // progress = pourcentage ou pages lues
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    // Vérifie si le livre est déjà dans booksRead
+    let bookProgress = user.booksRead.find(
+      (item) => item.book && item.book.toString() === bookId
+    );
+
+    if (bookProgress) {
+      // Met à jour la progression si déjà présent
+      bookProgress.progress = progress;
+    } else {
+      // Ajoute le livre sinon
+      user.booksRead.push({ book: bookId, progress });
+    }
+
+    await user.save();
+    res.json({ message: 'Livre ajouté/mis à jour', booksRead: user.booksRead });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.updateBookRead = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const bookReadId = req.params.id;
+    const { progress } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    const bookRead = user.booksRead.id(bookReadId);
+    if (!bookRead) return res.status(404).json({ message: 'Livre lu non trouvé' });
+
+    bookRead.progress = progress;
+    await user.save();
+
+    res.json({ message: 'Progression mise à jour', bookRead });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
