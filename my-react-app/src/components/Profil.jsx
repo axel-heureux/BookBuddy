@@ -43,13 +43,14 @@ function Profil() {
   };
 
   if (loading) return <div>Chargement...</div>;
-  if (!user) return <div>Utilisateur non connecté.</div>;
+  if (!user) return navigate('/login');
 
   return (
   <div>
       <Navbar /> {/* Affiche la navbar ici */}
     <div className="profil-container">
       <h2 className="profil-title">Mon profil</h2>
+      <hr className="custom-hr" />
       <div className="profil-info"><strong>ID :</strong> {user._id}</div>
       <div className="profil-info"><strong>Pseudonyme :</strong> {user.username}</div>
       <div className="profil-info"><strong>Email :</strong> {user.email}</div>
