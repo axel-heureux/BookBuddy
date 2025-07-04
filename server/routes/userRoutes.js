@@ -6,6 +6,8 @@ const auth = require('../middleware/authMiddleware');
 
 // Protège toutes les routes sensibles avec auth
 router.get('/', auth, userController.getUsers);
+router.get('/profile', auth, userController.getProfile);
+router.get('/booksread', auth, userController.getBooksRead);
 router.get('/:id', auth, userController.getUserById);
 router.put('/:id', auth, userController.updateUser);
 router.delete('/:id', auth, userController.deleteUser);
@@ -13,6 +15,10 @@ router.post('/:userId/favorites', auth, favoriteController.addFavoriteBook);
 router.delete('/:userId/favorites/:bookId', auth, favoriteController.removeFavoriteBook);
 router.put('/:userId/progress/:bookId', auth, userController.updateReadingProgress);
 router.post('/logout', auth, userController.logoutUser); // Déconnexion de l'utilisateur
+router.post('/:id/rewards', auth, userController.addRewardToUser);
+router.delete('/booksread/:id', auth, userController.deleteBookRead);
+router.post('/:userId/booksread', auth, userController.addBookRead);
+router.put('/booksread/:id', auth, userController.updateBookRead);
 
 // Routes publiques
 router.post('/', userController.createUser);
