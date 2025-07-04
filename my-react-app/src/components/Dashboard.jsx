@@ -121,41 +121,43 @@ function Dashboard() {
   return (
     <div>
       <Navbar />
+<div className="centered-section">
+  <h2>
+    {username ? `Livres lus par ${username}` : 'Vos livres lus'}
+  </h2>
 
-      <h2 style={{ textAlign: 'center' }}>
-        {username ? `Livres lus par ${username}` : 'Vos livres lus'}
-      </h2>
+  <div style={{ marginBottom: 20 }}>
+    <button className="btn-green" onClick={() => setAddModalOpen(true)}>
+      Ajouter un livre à la bibliothèque
+    </button>
+  </div>
 
-      <div style={{ textAlign: 'center', marginBottom: 20 }}>
-        <button className="btn-green" onClick={() => setAddModalOpen(true)}>
-          Ajouter un livre à la bibliothèque
-        </button>
-      </div>
+  {booksRead.length === 0 ? (
+    <p>Aucun livre lu pour le moment.</p>
+  ) : (
+    <ul className="book-list">
+      {booksRead.map((item, idx) => (
+        <li key={item.book?._id || idx} className="book-card">
+          <strong>{item.book?.titre || 'Titre inconnu'}</strong>
+          <div>Auteur : {item.book?.auteur || 'Inconnu'}</div>
+          <div>Progression : {item.progress || 0}%</div>
+          <div className="button-group">
+            <button className="btn-orange" onClick={() => handleEdit(item._id)}>
+              Modifier
+            </button>
+            <button className="btn-blue" onClick={() => handleAddFavorite(item.book?._id)}>
+              Favori
+            </button>
+            <button className="btn-red" onClick={() => handleDelete(item._id)}>
+              Supprimer
+            </button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
 
-      {booksRead.length === 0 ? (
-        <p style={{ textAlign: 'center' }}>Aucun livre lu pour le moment.</p>
-      ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {booksRead.map((item, idx) => (
-            <li key={item.book?._id || idx} className="book-card">
-              <strong>{item.book?.titre || 'Titre inconnu'}</strong>
-              <div>Auteur : {item.book?.auteur || 'Inconnu'}</div>
-              <div>Progression : {item.progress || 0}%</div>
-              <div className="button-group">
-                <button className="btn-orange" onClick={() => handleEdit(item._id)}>
-                  Modifier
-                </button>
-                <button className="btn-blue" onClick={() => handleAddFavorite(item.book?._id)}>
-                  Favori
-                </button>
-                <button className="btn-red" onClick={() => handleDelete(item._id)}>
-                  Supprimer
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
 
       {addModalOpen && (
         <div className="modal-overlay">
