@@ -4,14 +4,14 @@ function MobileContainer({ children }) {
   return (
     <div
       style={{
-        maxWidth: 400,
+        width: '100vw',
         minHeight: '100vh',
-        margin: '0 auto',
+        margin: 0,
         background: '#000000',
-        border: '1px solid #e5e7eb',
+        border: 'none',
         borderRadius: 16,
-        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-        overflow: 'hidden',
+        boxShadow: 'none',
+        overflow: 'visible',
         display: 'flex',
         flexDirection: 'column',
       }}

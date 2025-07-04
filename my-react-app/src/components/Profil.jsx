@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Profil.css';
+import Navbar from './Navbar'; // Ajoute l'import de la navbar
 
 function Profil() {
   const [user, setUser] = useState(null);
@@ -45,6 +46,8 @@ function Profil() {
   if (!user) return <div>Utilisateur non connecté.</div>;
 
   return (
+  <div>
+      <Navbar /> {/* Affiche la navbar ici */}
     <div className="profil-container">
       <h2 className="profil-title">Mon profil</h2>
       <div className="profil-info"><strong>ID :</strong> {user._id}</div>
@@ -112,6 +115,7 @@ function Profil() {
         Se déconnecter
       </button>
     </div>
+  </div>
   );
 }
 

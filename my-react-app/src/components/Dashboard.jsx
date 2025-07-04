@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-import './dashboard.css';
 import BookList from './BookList';
+import Navbar from './Navbar';
+import './Dashboard.css'; // <-- Ajoute ce fichier CSS
 
 function Dashboard() {
   const [booksRead, setBooksRead] = useState([]);
@@ -13,7 +13,6 @@ function Dashboard() {
   const [editBook, setEditBook] = useState(null);
   const [editProgress, setEditProgress] = useState(0);
 
-  // Pour la modal d'ajout de livre
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [newBookTitre, setNewBookTitre] = useState('');
   const [newBookAuteur, setNewBookAuteur] = useState('');
@@ -31,9 +30,10 @@ function Dashboard() {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
-        setUsername(res.data.user?.username || '');
-        setBooksRead(res.data.user?.booksRead || []);
-        setUserId(res.data.user?._id || '');
+        const user = res.data.user || {};
+        setUsername(user.username || '');
+        setBooksRead(user.booksRead || []);
+        setUserId(user._id || '');
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -45,17 +45,19 @@ function Dashboard() {
       await axios.delete(`http://localhost:5000/users/booksread/${bookReadId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setBooksRead(booksRead.filter(item => item._id !== bookReadId));
-    } catch (err) {
+      setBooksRead(prev => prev.filter(item => item._id !== bookReadId));
+    } catch {
       alert('Erreur lors de la suppression');
     }
   };
 
   const handleEdit = (bookReadId) => {
     const book = booksRead.find(item => item._id === bookReadId);
-    setEditBook(book);
-    setEditProgress(book.progress || 0);
-    setModalOpen(true);
+    if (book) {
+      setEditBook(book);
+      setEditProgress(book.progress || 0);
+      setModalOpen(true);
+    }
   };
 
   const handleModalClose = () => {
@@ -72,11 +74,13 @@ function Dashboard() {
         { progress: editProgress },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setBooksRead(booksRead.map(item =>
-        item._id === editBook._id ? { ...item, progress: editProgress } : item
-      ));
+      setBooksRead(prev =>
+        prev.map(item =>
+          item._id === editBook._id ? { ...item, progress: editProgress } : item
+        )
+      );
       handleModalClose();
-    } catch (err) {
+    } catch {
       alert('Erreur lors de la modification');
     }
   };
@@ -90,12 +94,11 @@ function Dashboard() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert('Livre ajouté aux favoris !');
-    } catch (err) {
-      alert('Erreur lors de l\'ajout aux favoris');
+    } catch {
+      alert("Erreur lors de l'ajout aux favoris");
     }
   };
 
-  // Ajout d'un livre dans la collection books
   const handleAddBook = async () => {
     try {
       await axios.post('http://localhost:5000/books', {
@@ -108,177 +111,99 @@ function Dashboard() {
       setNewBookAuteur('');
       setNewBookDescription('');
       alert('Livre ajouté à la bibliothèque !');
-    } catch (err) {
-      alert('Erreur lors de l\'ajout du livre');
+    } catch {
+      alert("Erreur lors de l'ajout du livre");
     }
   };
 
   if (loading) return <div>Chargement...</div>;
 
   return (
-    <div style={{ maxWidth: 700, margin: '2rem auto' }}>
-      {/* NAVBAR */}
-      <nav className="homepage-navbar" style={{ display: 'flex', justifyContent: 'center', gap: 20, marginBottom: 30 }}>
-        <Link to="/dashboard" className="nav-link">Tableau de bord</Link>
-        <Link to="/favorites" className="nav-link">Favoris</Link>
-        <Link to="/rewards" className="nav-link">Récompenses</Link>
-        <Link to="/profile" className="nav-link">Profil</Link>
-      </nav>
-      {/* FIN NAVBAR */}
+    <div>
+      <Navbar />
 
       <h2 style={{ textAlign: 'center' }}>
         {username ? `Livres lus par ${username}` : 'Vos livres lus'}
       </h2>
-      <button
-        style={{
-          marginBottom: 20,
-          background: '#10b981',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 4,
-          padding: '0.5rem 1.2rem',
-          cursor: 'pointer'
-        }}
-        onClick={() => setAddModalOpen(true)}
-      >
-        Ajouter un livre à la bibliothèque
-      </button>
+
+      <div style={{ textAlign: 'center', marginBottom: 20 }}>
+        <button className="btn-green" onClick={() => setAddModalOpen(true)}>
+          Ajouter un livre à la bibliothèque
+        </button>
+      </div>
+
       {booksRead.length === 0 ? (
         <p style={{ textAlign: 'center' }}>Aucun livre lu pour le moment.</p>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {booksRead.map((item, idx) => (
-            <li key={item.book?._id || idx} style={{ margin: '1rem 0', padding: '1rem', border: '1px solid #eee', borderRadius: 8 }}>
+            <li key={item.book?._id || idx} className="book-card">
               <strong>{item.book?.titre || 'Titre inconnu'}</strong>
               <div>Auteur : {item.book?.auteur || 'Inconnu'}</div>
               <div>Progression : {item.progress || 0}%</div>
-              <button
-                style={{ marginRight: 8, background: '#f59e42', color: '#fff', border: 'none', borderRadius: 4, padding: '0.3rem 0.8rem', cursor: 'pointer' }}
-                onClick={() => handleEdit(item._id)}
-              >
-                Modifier
-              </button>
-              <button
-                style={{ marginRight: 8, background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 4, padding: '0.3rem 0.8rem', cursor: 'pointer' }}
-                onClick={() => handleAddFavorite(item.book?._id)}
-              >
-                Ajouter aux favoris
-              </button>
-              <button
-                style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, padding: '0.3rem 0.8rem', cursor: 'pointer' }}
-                onClick={() => handleDelete(item._id)}
-              >
-                Supprimer
-              </button>
+              <div className="button-group">
+                <button className="btn-orange" onClick={() => handleEdit(item._id)}>
+                  Modifier
+                </button>
+                <button className="btn-blue" onClick={() => handleAddFavorite(item.book?._id)}>
+                  Favori
+                </button>
+                <button className="btn-red" onClick={() => handleDelete(item._id)}>
+                  Supprimer
+                </button>
+              </div>
             </li>
           ))}
         </ul>
       )}
 
-      {/* Modal d'ajout de livre */}
       {addModalOpen && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-        }}>
-          <div style={{
-            background: '#fff', padding: '2rem', borderRadius: 8, minWidth: 300, boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-          }}>
-            <h3 style={{ color: '#111' }}>Ajouter un livre à la bibliothèque</h3>
-            <div style={{ marginBottom: '1rem', color: '#111' }}>
-              <label>
-                Titre&nbsp;
-                <input
-                  type="text"
-                  value={newBookTitre}
-                  onChange={e => setNewBookTitre(e.target.value)}
-                  required
-                  style={{ width: 180 }}
-                  placeholder="Titre du livre"
-                />
-              </label>
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Ajouter un livre à la bibliothèque</h3>
+            <label>
+              Titre
+              <input type="text" value={newBookTitre} onChange={e => setNewBookTitre(e.target.value)} />
+            </label>
+            <label>
+              Auteur
+              <input type="text" value={newBookAuteur} onChange={e => setNewBookAuteur(e.target.value)} />
+            </label>
+            <label>
+              Description
+              <input type="text" value={newBookDescription} onChange={e => setNewBookDescription(e.target.value)} />
+            </label>
+            <div className="button-group">
+              <button className="btn-green" onClick={handleAddBook}>Ajouter</button>
+              <button className="btn-red" onClick={() => setAddModalOpen(false)}>Annuler</button>
             </div>
-            <div style={{ marginBottom: '1rem', color: '#111' }}>
-              <label>
-                Auteur&nbsp;
-                <input
-                  type="text"
-                  value={newBookAuteur}
-                  onChange={e => setNewBookAuteur(e.target.value)}
-                  required
-                  style={{ width: 180 }}
-                  placeholder="Auteur"
-                />
-              </label>
-            </div>
-            <div style={{ marginBottom: '1rem', color: '#111' }}>
-              <label>
-                Description&nbsp;
-                <input
-                  type="text"
-                  value={newBookDescription}
-                  onChange={e => setNewBookDescription(e.target.value)}
-                  style={{ width: 180 }}
-                  placeholder="Description"
-                />
-              </label>
-            </div>
-            <button
-              style={{ marginRight: 8, background: '#10b981', color: '#fff', border: 'none', borderRadius: 4, padding: '0.3rem 1rem', cursor: 'pointer' }}
-              onClick={handleAddBook}
-            >
-              Ajouter
-            </button>
-            <button
-              style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, padding: '0.3rem 1rem', cursor: 'pointer' }}
-              onClick={() => setAddModalOpen(false)}
-            >
-              Annuler
-            </button>
           </div>
         </div>
       )}
 
-      {/* Modal de modification progression */}
       {modalOpen && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-        }}>
-          <div style={{
-            background: '#fff', padding: '2rem', borderRadius: 8, minWidth: 300, boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-          }}>
-            <h3 style={{ color: '#111' }}>Modifier la progression</h3>
-            <div style={{ marginBottom: '1rem', color: '#111' }}>
-              <label>
-                Progression (%):&nbsp;
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={editProgress}
-                  onChange={e => setEditProgress(Number(e.target.value))}
-                  style={{ width: 60 }}
-                />
-              </label>
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Modifier la progression</h3>
+            <label>
+              Progression (%)
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={editProgress}
+                onChange={e => setEditProgress(Number(e.target.value))}
+              />
+            </label>
+            <div className="button-group">
+              <button className="btn-blue" onClick={handleModalSave}>Enregistrer</button>
+              <button className="btn-red" onClick={handleModalClose}>Annuler</button>
             </div>
-            <button
-              style={{ marginRight: 8, background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 4, padding: '0.3rem 1rem', cursor: 'pointer' }}
-              onClick={handleModalSave}
-            >
-              Enregistrer
-            </button>
-            <button
-              style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, padding: '0.3rem 1rem', cursor: 'pointer' }}
-              onClick={handleModalClose}
-            >
-              Annuler
-            </button>
           </div>
         </div>
       )}
 
-      <BookList userId={userId} onBookRead={() => {/* rafraîchir livres lus si besoin */}} />
+      <BookList userId={userId} onBookRead={() => {}} />
     </div>
   );
 }

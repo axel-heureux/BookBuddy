@@ -2,6 +2,7 @@ import './HomePage.css';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Navbar from './Navbar';
 
 function HomePage() {
   const [username, setUsername] = useState('');
@@ -22,12 +23,7 @@ function HomePage() {
 
   return (
     <>
-      <nav className="homepage-navbar">
-        <Link to="/dashboard" className="nav-link">Tableau de bord</Link>
-        <Link to="/favorites" className="nav-link">Favoris</Link>
-        <Link to="/rewards" className="nav-link">Récompenses</Link>
-        <Link to="/profile" className="nav-link">Profil</Link>
-      </nav>
+      <Navbar />
       <div className="homepage-welcome">
         {username ? (
           <h1>Bienvenue, {username} !</h1>

@@ -1,25 +1,12 @@
-import { Link, useLocation } from 'react-router-dom';
-import './Navbar.css';
+import { Link } from 'react-router-dom';
 
 function Navbar() {
-  const location = useLocation();
-
   return (
-    <nav className="navbar">
-      <ul className="navbar-list">
-        <li className={location.pathname === '/dashboard' ? 'active' : ''}>
-          <Link to="/dashboard">Tableau de bord</Link>
-        </li>
-        <li className={location.pathname === '/favorites' ? 'active' : ''}>
-          <Link to="/favorites">Favoris</Link>
-        </li>
-        <li className={location.pathname === '/rewards' ? 'active' : ''}>
-          <Link to="/rewards">Récompenses</Link>
-        </li>
-        <li className={location.pathname === '/profil' ? 'active' : ''}>
-          <Link to="/profil">Profil</Link>
-        </li>
-      </ul>
+    <nav className="homepage-navbar">
+      <Link to="/dashboard" className="nav-link">Tableau de bord</Link>
+      <Link to="/favorites" className="nav-link">Favoris</Link>
+      <Link to="/rewards" className="nav-link">Récompenses</Link>
+      <Link to="/profile" className="nav-link">Profil</Link>
     </nav>
   );
 }
