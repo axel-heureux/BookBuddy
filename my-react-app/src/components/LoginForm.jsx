@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './SignupForm.css';
@@ -6,6 +6,7 @@ import './SignupForm.css';
 function LoginForm() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -16,13 +17,30 @@ function LoginForm() {
     setError('');
     try {
       const res = await axios.post('http://localhost:5000/users/login', formData);
-      localStorage.setItem('token', res.data.token); // Stocke le token d'abord
+      localStorage.setItem('token', res.data.token);
       alert('Connexion réussie !');
-      navigate('/'); // Puis redirige
+      navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Erreur de connexion');
     }
   };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const res = await axios.get('http://localhost:5000/users/profile', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUserData(res.data);
+      } catch (err) {
+        console.error('Erreur lors de la récupération des données utilisateur', err);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <div className="login-form-container flex justify-center items-center min-h-screen">
