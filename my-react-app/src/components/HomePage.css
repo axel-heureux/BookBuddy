@@ -22,5 +22,24 @@
 
 .homepage-welcome {
   text-align: center;
-  margin-top: 3rem;
+  margin-top: 7rem;
 }
+
+/* Dans HomePage.css */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Exemple dans ton CSS */
+.custom-hr {
+  border: none;
+  height: 2px;
+  background-color: #fff;
+  width: 300px;
+  margin: 30px auto;
+}
+

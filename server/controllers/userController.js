@@ -121,8 +121,8 @@ exports.logoutUser = (req, res) => {
 
 exports.getProfile = async (req, res) => {
   try {
-    // req.user._id doit être présent (voir remarque ci-dessous)
-    const user = await User.findById(req.user._id || req.user.id)
+    console.log('req.user:', req.user); // Ajoute ceci
+    const user = await User.findById(req.user._id)
       .populate('booksRead.book')
       .populate('favorites.book')
       .populate('rewards');

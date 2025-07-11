@@ -3,6 +3,8 @@ import axios from 'axios';
 import BookList from './BookList';
 import Navbar from './Navbar';
 import './Dashboard.css'; // <-- Ajoute ce fichier CSS
+import './Modal.css'; // <-- Ajoute ce fichier CSS pour les modals
+
 
 function Dashboard() {
   const [booksRead, setBooksRead] = useState([]);
@@ -140,7 +142,7 @@ function Dashboard() {
         <li key={item.book?._id || idx} className="book-card">
           <strong>{item.book?.titre || 'Titre inconnu'}</strong>
           <div>Auteur : {item.book?.auteur || 'Inconnu'}</div>
-          <div>Progression : {item.progress || 0}%</div>
+          <div>Note : {item.progress || 0}%</div>
           <div className="button-group">
             <button className="btn-orange" onClick={() => handleEdit(item._id)}>
               Modifier
@@ -157,6 +159,8 @@ function Dashboard() {
     </ul>
   )}
 </div>
+
+  <hr className="custom-hr" />
 
 
       {addModalOpen && (
@@ -186,9 +190,9 @@ function Dashboard() {
       {modalOpen && (
         <div className="modal-overlay">
           <div className="modal">
-            <h3>Modifier la progression</h3>
+            <h3>Modifier la note</h3>
             <label>
-              Progression (%)
+              Note (%)
               <input
                 type="number"
                 min={0}
